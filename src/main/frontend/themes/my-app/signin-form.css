@@ -1,0 +1,125 @@
+body{
+    background-color: #000;
+    color: white;
+    margin: 0px;
+}
+
+body::-webkit-scrollbar{
+    display: none;
+    width: 0px;
+    height: 0px;
+}
+
+
+
+
+
+vaadin-vertical-layout{
+    background-color: #000;
+    
+}
+
+.sign-in-form-container{
+    display: flex;
+    flex-direction: column;
+    max-width: 400px;
+    margin: 100px auto;
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+h2 {
+    text-align: center;
+    color: white;
+    margin-bottom: 20px;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+}
+
+
+
+.label {
+    margin-bottom: 5px;
+}
+
+input, vaadin-button {
+    margin-bottom: 15px;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+}
+
+input {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: #fff;
+}
+
+vaadin-button {
+    background-color: #ff9800;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-bottom: 10px;
+}
+
+vaadin-button:hover {
+    background-color: #d98405;
+}
+
+.forgot-pass{
+    position: relative;
+    cursor: pointer;
+    font-size: 12px;
+    align-self: end;
+    
+}
+
+.forgot-pass:hover {
+    color: #f0ba68;
+}
+
+.back-button{
+    width: 25px;
+    position: relative;
+    left: -10px;
+    bottom: 7px;
+    cursor: pointer;
+    transition: transform 0.3s;
+}
+
+.back-button:hover{
+    transform: scale(1.05);
+}
+
+.paragraph-link {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.paragraph-link span {
+    cursor: pointer;
+    padding-left: 10px;
+    color: #ff9800;
+    text-decoration: none;
+}
+
+.paragraph-link span:hover{
+    color: #f0ba68;
+}
+
+.label-error-shower{
+    overflow: scroll;
+    max-width: 280px;
+    margin-bottom: 5px;
+}
+
+.label-error-shower::-webkit-scrollbar{
+    width: 0px;
+    height: 0px;
+
+}

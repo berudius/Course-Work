@@ -1,0 +1,393 @@
+@import "components/header-and-footer.css";
+
+main{
+  min-height: 600px;
+  background-color: #121212;
+}
+
+.categories {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto; /* Додаємо горизонтальну прокрутку */
+  padding: 10px;
+  background-color: #292929; /* Відповідає кольору страв */
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  margin: 20px 0; /* Відступ зверху та знизу */
+}
+
+.category {
+  padding: 10px 20px;
+  background-color: #1e1e1e; /* Темніший фон для категорій */
+  border-radius: 5px;
+  margin-right: 10px; /* Відстань між категоріями */
+  transition: background-color 0.3s, transform 0.3s;
+  cursor: pointer;
+}
+
+.category-clicked{
+  background-color: #ff9800;
+}
+
+.category:hover {
+  background-color: #ff9800; /* Колір при наведенні */
+  transform: scale(1.05); /* Легка анімація при наведенні */
+}
+
+.categories::-webkit-scrollbar {
+  height: 8px; /* Висота скроллбару */
+}
+
+.categories::-webkit-scrollbar-thumb {
+  background: #ff9800; /* Колір скроллбару */
+  border-radius: 10px; /* Заокруглені кути */
+}
+
+.categories::-webkit-scrollbar-thumb:hover {
+  background: #ffa726; /* Колір при наведенні на скроллбар */
+}
+.dishes {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 20px;
+}
+
+.dish {
+  background-color: #292929;
+  border-radius: 8px;
+  margin: 10px 15px;
+
+  padding: 15px;
+  width: 250px;
+  text-align: center;
+  position: relative;
+  transition: transform 0.3s;
+}
+
+.dish:hover {
+  transform: scale(1.05);
+}
+
+.dish img {
+  max-width: 100%;
+  height: 150px; /* Встановлюємо однаковий розмір */
+  border-radius: 5px;
+}
+
+.menu {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  flex-direction: column; /* Вертикальне розташування */
+}
+
+.dots {
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1; /* Вирівнюємо вертикально */
+  transform: rotate(90deg); /* Обертаємо на 90 градусів */
+  display: inline-block; /* Для коректного відображення обертання */
+  position: relative;
+  left: 180%;
+}
+
+.context-menu {
+  display: none;
+  position: absolute;
+  top: 25px;
+  right: 0;
+  background-color: #1e1e1e;
+  border-radius: 5px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  z-index: 10;
+}
+
+.show {
+  display: block !important;
+}
+
+.context-menu ul {
+  list-style-type: none;
+  padding: 10px;
+  margin: 0;
+}
+
+.context-menu li {
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.context-menu li:hover {
+  background-color: #ff9800;
+}
+
+.dish span.id{
+  display: none;
+}
+
+
+
+
+.add-button {
+  position: fixed;
+  z-index: 1;
+  bottom: 40px; /* Відстань віднизу */
+  right: 20px; /* Відстань від правого краю */
+  width: 60px; /* Ширина кнопки */
+  height: 60px; /* Висота кнопки */
+  background-color: #ff9800; /* Основний колір кнопки */
+  color: #ffffff; /* Колір тексту */
+  border-radius: 50%; /* Заокруглена форма */
+  display: flex; /* Центруємо вміст */
+  align-items: center; /* Вертикальне вирівнювання */
+  justify-content: center; /* Горизонтальне вирівнювання */
+  font-size: 36px; /* Розмір шрифту */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Тінь */
+  transition: background-color 0.3s, transform 0.3s; /* Анімація */
+  cursor: pointer; /* Курсор при наведенні */
+}
+
+.add-button:hover {
+  background-color: #ffa726; /* Колір при наведенні */
+  transform: scale(1.1); /* Збільшення при наведенні */
+}
+
+.add-button:active {
+  transform: scale(0.95); /* Зменшення при натисканні */
+}
+
+
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+      transform: translateY(0);
+  }
+  40% {
+      transform: translateY(-10px);
+  }
+  60% {
+      transform: translateY(-5px);
+  }
+}
+
+  
+
+
+
+
+
+.delete-banner {
+  width: 170px;
+  height: 209px;
+  position: relative;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #1e1e1e;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.7);
+  z-index: 100;
+  text-align: center;
+  color: #e0e0e0;
+}
+
+.delete-banner p {
+  margin-bottom: 20px;
+  font-size: 1.2em;
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.delete-button,
+.cancel-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.delete-button {
+  background-color: #ff5252; /* Червоний колір для видалення */
+  color: #ffffff;
+}
+
+.cancel-button {
+  background-color: #607d8b; /* Сірий колір для скасування */
+  color: #ffffff;
+}
+
+.delete-button:hover {
+  background-color: #ff1744; /* Темніший червоний при наведенні */
+}
+
+.cancel-button:hover {
+  background-color: #455a64; /* Темніший сірий при наведенні */
+}
+
+
+
+
+
+
+
+
+.form-container {
+  display: none;
+  position: fixed;
+  top: 50px;
+  right: 36vw;
+  max-height: 550px;
+  overflow: auto;
+  background-color: #292929;
+  border-radius: 8px;
+  padding: 19.125px; /* Зменшено на 15% з 22.5px */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.7);
+  color: #e0e0e0;
+  max-width: 375px; /* Залишено без змін */
+  width: 100%;
+  margin: 17px auto; /* Зменшено на 15% з 20px */
+  font-family: 'Montserrat', sans-serif;
+  z-index: 1000;
+}
+
+.form-container::-webkit-scrollbar{
+  width: 0px;
+  height: 0px;
+}
+
+.form-container h2 {
+  text-align: center;
+  color: #ff9800;
+  margin-bottom: 12.75px; /* Зменшено на 15% з 15px */
+}
+
+.form-group {
+  margin-bottom: 12.75px; /* Зменшено на 15% з 15px */
+}
+
+.form-container span {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+
+.form-container input{
+  margin-bottom: 5px;
+  box-sizing: border-box; 
+  width: 100%;
+  padding: 7.65px; /* Зменшено на 15% з 9px */
+  border: none;
+  border-radius: 5px;
+  background-color: #1e1e1e;
+  color: #e0e0e0;
+  transition: border 0.3s;
+}
+
+.custom-textarea {
+  margin-bottom: 5px;
+  box-sizing: border-box; 
+  display: inline-block; /* Change to inline-block for span */
+  width: 100%;
+  padding: 7.65px; /* Зменшено на 15% з 9px */
+  border: none;
+  border-radius: 5px;
+  background-color: #1e1e1e;
+  color: #e0e0e0;
+  transition: border 0.3s;
+  min-height: 100px; /* Мінімальна висота */
+  overflow: auto; /* Прокрутка */
+  white-space: pre-wrap; /* Обтікання тексту */
+  font-size: 13px;
+  min-height: 70px;
+}
+
+.custom-textarea:empty:before {
+  content: attr(placeholder);
+  color: #999; 
+}
+
+
+
+
+.form-container input:focus, .custom-textarea:focus{
+  outline: none;
+  border: 2px solid #ff9800;
+}
+
+.form-container .validation-message {
+  color: #ff5252;
+  font-size: 0.765em; /* Зменшено на 15% з 0.9em */
+}
+
+.form-container .submit-button, .form-container .edit-button {
+  background-color: #ff9800;
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  padding: 7.65px; /* Зменшено на 15% з 9px */
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-weight: bold;
+  width: 100%;
+}
+
+.form-container .submit-button:hover {
+  background-color: #ffa726;
+}
+
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.close-button:hover{
+  color: #da8300;
+}
+
+
+
+
+
+
+
+
+button[part="remove-button"] {
+  color: #ffa726 !important;
+  cursor: pointer;
+}
+
+/* Якщо вам потрібно змінити колір псевдоелементу ::before */
+button[part="remove-button"]::before {
+  color: #ffa726 !important;
+}
+:root {
+  --lumo-contrast-60pct: #ffa726 !important;
+  --lumo-secondary-text-color: white !important; 
+  --lumo-disabled-text-color: white !important; 
+}
+
+
+:host([max-files-reached]) [part='drop-label'] {
+  color: white; /* Змінюємо колір на білий */
+}
+
+[part='drop-label'] {
+  color: white; /* Змінюємо колір на білий */
+}
+

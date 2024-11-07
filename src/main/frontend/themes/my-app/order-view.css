@@ -1,0 +1,268 @@
+@import "components/header-and-footer.css";
+
+
+
+
+
+
+.header-cell, .addOrderform .cell {
+    border: 1px solid #292929;
+    text-align: center;
+    border-bottom: 1px solid #ffffff; /* Легкий роздільник */
+    flex: 1;
+}
+.header-cell{
+    padding: 12px; /* Відступи для клітинок */
+}
+.cell{
+
+padding: 8px 12px;
+}
+.header-cell{
+    font-size: 16px;
+}
+
+@media (max-width: 1200px) {
+    .header-cell {
+        font-size: 14px; /* Менший розмір для екранів до 1200px */
+    }
+}
+
+@media (max-width: 900px) {
+    .header-cell {
+        font-size: 12px; /* Ще менший розмір для екранів до 900px */
+    }
+}
+
+@media (max-width: 600px) {
+    .header-cell {
+        font-size: 10px; /* Найменший розмір для екранів до 600px */
+    }
+}
+
+.header-cell::-webkit-scrollbar, .cell::-webkit-scrollbar{
+  width: 0px;
+  height: 0px;
+}
+
+.cell:nth-child(odd){
+    overflow: scroll;
+    max-width: 20vw;
+}
+.cell:nth-child(even){
+    max-width: 20vw;
+}
+
+.table-row {
+    display: flex;
+    background-color: #f9f9f9; /* Світлий фон рядків */
+    color: #333; /* Темний текст */
+    transition: background-color 0.3s;
+}
+
+.order-styled-table .table-row {
+    cursor: pointer;
+}
+
+.table-header {
+    
+    display: flex;
+    background-color: #1e1e1e; /* Темно-сірий фон заголовка */
+    color: #e0e0e0; /* Білий текст заголовка */
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.order-styled-table {
+    position: relative;
+    width: 60%; /* Збільшена ширина таблиці */
+    margin: 20px auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    background-color: #ffffff; /* Білий фон таблиці */
+}
+
+.context-menu-caller{
+    cursor: pointer;
+    rotate: 90deg;
+    position: absolute;
+    font-size: 30px;
+}
+
+.order-styled-table .menu{
+    left: 102%;
+    right: 0;
+}
+
+
+main{
+    min-height: 600px;
+    background-color: #121212;
+  }
+
+
+
+
+  .addOrderform {
+    position: fixed;
+    max-height: 600px;
+    overflow-y: scroll;
+    z-index: 1;
+    top: 135px;
+    left: 35%;
+    display: none;
+    max-width: 400px;
+    margin: auto;
+    background: #292929;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.7);
+    color: #e0e0e0;
+}
+
+.addOrderform h1, .addOrderform h2 {
+    position: relative;
+    text-align: center;
+    color: #ff9800;
+    font-size: 1.8em;
+}
+
+.addOrderform h1{
+    margin-left: 10%;
+}
+
+h2.totalSum{
+    padding-left: 2%;
+    color: #898989;
+    margin-top: 20px;
+    text-align: left;
+}
+
+
+.addOrderform h3{
+    margin-top: 25px;
+    font-size: 16px;
+    left: -35%;
+    color: #e7ebef;
+}
+
+.inputsContainer {
+    display: flex;
+    flex-direction: column; /* Розташування по вертикалі */
+    align-items: center; /* Центрування елементів */
+}
+
+.addOrderform .label1, .addOrderform .label2 {
+    margin-top: 20px;
+    text-align: center; /* Центрування тексту */
+}
+
+.label1{
+    position: relative;
+    left: -102px;
+}
+
+.label2{
+    position: relative;
+    left: -122px;
+}
+
+vaadin-select.add-order-select, .addOrderform input {
+    width: 90%; /* Збільшена ширина для кращого вигляду */
+    margin-top: 10px;
+    color: #e0e0e0;
+    border: none;
+    border-radius: 5px;
+
+}
+
+.addOrderform input {
+    margin-top: 20px;
+}
+
+.order-styled-table {
+    display: flex;
+    flex-direction: column; /* Розташування по вертикалі */
+    border-radius: 8px; /* Закруглені кути */
+    margin-top: 16px; /* Відступ зверху */
+}
+
+.order-header-row {
+    display: flex;
+    background-color: #1e1e1e;
+    color: #e0e0e0;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.order-row {
+    display: flex; /* Розташування рядків в рядок */
+    border-bottom: 1px solid #ccc; /* Обводка рядків */
+    padding: 8px; /* Внутрішні відступи для рядків */
+}
+
+.order-row:last-child {
+    border-bottom: none; /* Сховати обводку у останнього рядка */
+}
+
+.order-heder-cell{
+    font-size: 8px;
+    text-align: center;
+    border-bottom: 1px solid #ffffff;
+    flex: 1;
+}
+.order-description-cell {
+    flex: 1; /* Розтягуємо клітинки на всю ширину */
+    padding: 8px; /* Внутрішні відступи для клітинок */
+    text-align: center; /* Центрування тексту */
+    overflow-y: scroll;
+    display: flex;
+    height: 12px;
+    border: 1px solid #292929;
+    font-size: 8px;
+    padding: 8px 12px;
+    text-align: center;
+    border-bottom: 1px solid #ffffff;
+    flex: 1;
+}
+
+.addOrderform .cell{
+    font-size: 8px;
+}
+
+.order-description-cell::-webkit-scrollbar{
+    width: 0px;
+    height: 0px;
+}
+
+
+
+.addOrderform .submitButton{
+    display: block;
+    margin: 10px 0;
+}
+
+.addOrderform button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 15px;
+    background-color: #ff9800;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.addOrderform button:hover {
+    background-color: #ffa726;
+}
+
+.order-styled-table {
+    margin-top: 16px; /* Відступ зверху для таблиці */
+}
+
+.hide{
+    display: none !important;
+}

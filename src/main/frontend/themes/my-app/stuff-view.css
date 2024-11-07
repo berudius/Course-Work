@@ -1,0 +1,376 @@
+@import "components/header-and-footer.css";
+
+main{
+    min-height: 600px;
+    background-color: #121212;
+  }
+
+
+
+  .styled-table {
+    width: 60%; /* Збільшена ширина таблиці */
+    margin: 20px auto;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    background-color: #ffffff; /* Білий фон таблиці */
+}
+
+.table-header {
+    display: flex;
+    background-color: #1e1e1e; /* Темно-сірий фон заголовка */
+    color: #e0e0e0; /* Білий текст заголовка */
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.plus-button {
+    margin-bottom: 10px;
+    margin-left: 10%;
+    cursor: pointer;
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    line-height: 50px;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 24px;
+    transition: background-color 0.3s;
+}
+
+.plus-button:hover {
+    background-color: #0056b3;
+    transform: scale(1.1);
+}
+
+.header-cell, .cell {
+    
+    text-align: center;
+    border-bottom: 1px solid #ffffff; /* Легкий роздільник */
+    flex: 1;
+}
+.header-cell{
+    padding: 12px; /* Відступи для клітинок */
+}
+.cell{
+
+padding: 8px 12px;
+}
+.header-cell{
+    font-size: 16px;
+}
+
+@media (max-width: 1200px) {
+    .header-cell {
+        font-size: 14px; /* Менший розмір для екранів до 1200px */
+    }
+}
+
+@media (max-width: 900px) {
+    .header-cell {
+        font-size: 12px; /* Ще менший розмір для екранів до 900px */
+    }
+}
+
+@media (max-width: 600px) {
+    .header-cell {
+        font-size: 10px; /* Найменший розмір для екранів до 600px */
+    }
+}
+
+.header-cell::-webkit-scrollbar, .cell::-webkit-scrollbar{
+  width: 0px;
+  height: 0px;
+}
+
+.cell:nth-child(odd){
+    overflow: scroll;
+    max-width: 20vw;
+}
+.cell:nth-child(even){
+    max-width: 20vw;
+}
+
+.table-row {
+    display: flex;
+    background-color: #f9f9f9; /* Світлий фон рядків */
+    color: #333; /* Темний текст */
+    transition: background-color 0.3s;
+}
+
+.plus-row{
+    align-items: center;
+    height: 45px;
+}
+
+.user-types-row{
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: center;
+    position: relative;
+    background-color: #f9f9f9; /* Світлий фон рядків */
+    color: #333; /* Темний текст */
+    transition: background-color 0.3s;
+}
+
+span.user-type{ 
+    text-align: center;
+    width: 86px;
+    border-radius: 5px 5px;
+    cursor: pointer;
+    margin: 0 0.5px;
+    padding: 5px;
+}
+
+span.user-type:hover{
+    color: #e0e0e0;
+    background: #3c3c3c;
+}
+
+span.user-type-selected{
+    color: #121212;
+    background: #ffffff;
+}
+
+.plus-row:hover{
+    background-color: #f9f9f9 !important;
+}
+
+.table-row:hover {
+    background-color: #e0e0e0; /* Світле сіре підсвічування при наведенні */
+}
+
+.details {
+    display: none; /* Секретний блок */
+}
+
+.additional-info {
+    background-color: #f1f1f1; /* Світле підсвічування для додаткової інформації */
+    color: #ff9800; /* Оранжевий текст */
+    font-weight: bold;
+    padding: 10px;
+    text-align: left;
+}
+
+.editable {
+    background-color: transparent; /* Прозорий фон */
+    border: none; /* Без обводки */
+    width: 100%; /* Ширина */
+    color: #333; /* Темний текст */
+    font-size: 14px; /* Розмір тексту */
+    outline: none; /* Без обводки на фокус */
+}
+
+.input-list {
+    width: 60%;
+    background-color: #ffffff; /* Білий фон для списків */
+    color: #333; /* Темний текст */
+    border-radius: 4px; /* Кути */
+    cursor: pointer;
+    appearance: none; /* Сховати стандартну стрілку */
+    transition: border-color 0.3s, background-color 0.3s;
+    position: relative; /* Для позиціонування кастомної стрілки */
+}
+
+.input-list:hover, .input-list:focus {
+    border-color: #ff9800; /* Оранжевий при фокусі */
+    background-color: #f7f7f7; /* Світло-сірий фон при фокусі */
+}
+
+/* Кастомна стрілка для випадаючого списку */
+.input-list::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid #333; /* Колір стрілки */
+    transform: translateY(-50%);
+    pointer-events: none; /* Запобігти наведенню на стрілку */
+}
+
+
+.stuff-remove-icon{
+    cursor: pointer;
+    top: 13px;
+    right: 15px;
+    position: relative;
+    width: 22px;
+    height: 22px;
+}
+
+.styled-table span {
+    position: relative;
+    top: 6px;
+    white-space: nowrap; /* Запобігти переносам */
+    overflow: hidden; /* Запобігти переповненню */
+    text-overflow: ellipsis; /* Додати три крапки при переповненні */
+}
+
+img.submit-icon{
+    display: none;
+    margin-top: 10px;
+    cursor: pointer;
+    border-radius: 50px;
+    background: white;
+    width: 30px;
+    position: absolute;
+    left: 80.5%;
+}
+img.submit-icon:hover {
+    background: wheat;
+}
+
+
+
+
+.DB_user-rows{
+    overflow-y: scroll;
+    max-height: 500px;
+    margin-top: 30px;
+}
+
+.DB_user-rows::-webkit-scrollbar{
+    width: 0;
+    height: 0;
+}
+
+
+
+.show-flex{
+    display: flex !important;       
+}
+
+.user-add-form{
+    display: none;
+    box-sizing: border-box; 
+    justify-content: center;
+    /* color: red; */
+    border-radius: 5px;
+    border: 1px solid;
+    background: #ffffff;
+    width: 30%;
+    position: absolute;
+    flex-wrap: wrap;
+    /* color: red; */
+    top: 170px;
+    right: 35%;
+}
+
+.close-button-container{
+    position: relative;
+}
+.close-add-user-form-button{
+    margin-top: 5px;
+    margin-left: 2400%;
+    cursor: pointer;
+    color: #ff9800 !important;
+    font-size: 25px;
+
+}
+
+.user-add-form .h2{
+    color: #696969 !important;
+    font-size: 18px;
+    margin-top: 30px;
+}
+
+.input-field{
+    border-bottom: 1px solid;
+    width: 50%;
+    color: #696969;
+    border-bottom: 1px solid;
+}
+
+.input-field:focus-visible{
+    border: none !important;
+}
+.input-field:focus{
+    border: none !important;
+}
+
+.add-user-input-list{
+    margin-bottom: 15px !important;
+    border-radius: 10px;
+    background: #696969;
+}
+
+
+
+
+
+.user-add-form vaadin-button{
+    margin-top: 15px;
+    width: 70%;
+}
+
+vaadin-notification-card {
+    background-color: #ffcccc; /* Ваш колір фону */
+    color: #000; /* Колір тексту */
+    position: fixed; /* Фіксоване позиціювання */
+    top: 20px; /* Відстань від верхнього краю */
+    left: 50%; /* Центрування по горизонталі */
+    transform: translateX(-50%); /* Корекція центрування */
+    z-index: 1000; /* Забезпечення, щоб сповіщення було на передньому плані */
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+[class='container'] {
+    min-width: 50%;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+:root {
+    --lumo-icons-dropdown: ''; /* Відключає іконку */
+}
+
+
+:root {
+    --lumo-space-xs: 0px !important; 
+    --_lumo-selected-item-height: 15px !important;
+}
+:host {
+    
+    padding: var(--lumo-space-xs) 0;
+}
+
+::slotted(*){
+    min-height: var(--_lumo-selected-item-height);
+}
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,38 @@
+.real-body {
+    height: 100%;
+}
+
+html{
+   background-color: #121212;
+}
+
+footer{
+    margin-top: 5%;
+}
+
+.DB_tables-rows{
+    overflow-y: scroll;
+    max-height: 500px;
+}
+
+.DB_tables-rows::-webkit-scrollbar{
+    width: 0;
+    height: 0;
+}
+
+.DB_tables-rows .cell {
+    max-width: 25vw !important;
+}
+
+.DB_tables-rows .submit-icon{
+    margin-right: 10px;
+    left: 0;
+    position: relative;
+}
+
+
+.DB_tables-rows span{
+    margin-left: 15%;
+}
+
+
