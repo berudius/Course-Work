@@ -2,7 +2,6 @@ package com.bero.views;
 
 import java.sql.SQLException;
 
-import com.bero.DB_entities.Event;
 import com.bero.DB_entities.User;
 import com.bero.views.components.EventViewComponents.EventTable;
 import com.bero.views.components.generalComponents.HeaderAndFooter;
@@ -25,9 +24,8 @@ public class EventView extends VerticalLayout implements BeforeEnterObserver {
         User user = (User) VaadinSession.getCurrent().getAttribute("user");
         
         if (user == null) {
-            event.forwardTo(SigninView.class);
+            event.forwardTo(SignInView.class);
         }
-        
     }
 
     public EventView() throws ClassNotFoundException, SQLException{
@@ -45,9 +43,6 @@ public class EventView extends VerticalLayout implements BeforeEnterObserver {
         realBody.addClassName("real-body");
         add(realBody);
     }
-
-
-
     private Main createMain() throws ClassNotFoundException, SQLException{
         EventTable.resetState();
         EventTable eventTable = EventTable.getEventTable();
@@ -59,6 +54,4 @@ public class EventView extends VerticalLayout implements BeforeEnterObserver {
             eventTable.getOrderDetailsContainer()
         );
     }
-
-
 }

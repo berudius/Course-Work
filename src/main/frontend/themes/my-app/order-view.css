@@ -64,6 +64,7 @@ padding: 8px 12px;
     cursor: pointer;
 }
 
+
 .table-header {
     
     display: flex;
@@ -135,6 +136,15 @@ main{
 h2.totalSum{
     padding-left: 2%;
     color: #898989;
+    text-align: left;
+}
+h2.totalSum:nth-child(odd){
+    margin-bottom: 0px;
+}
+
+H4.totalQuantity{
+    padding-left: 2.15%;
+    color: #898989;
     margin-top: 20px;
     text-align: left;
 }
@@ -186,6 +196,10 @@ vaadin-select.add-order-select, .addOrderform input {
     flex-direction: column; /* Розташування по вертикалі */
     border-radius: 8px; /* Закруглені кути */
     margin-top: 16px; /* Відступ зверху */
+}
+
+.order-styled-table .table-row .cell{
+    max-height: 76px;
 }
 
 .order-header-row {
@@ -266,3 +280,5 @@ vaadin-select.add-order-select, .addOrderform input {
 .hide{
     display: none !important;
 }
+
+

@@ -1,12 +1,9 @@
-package com.bero.views.components.OrderViewComponents;
+package com.bero.views.components.OrderAndReportViewComponents;
 
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import com.bero.DB_Controllers.DB_Handler;
 import com.bero.DB_entities.Dish;
 import com.bero.DB_entities.Order;
@@ -15,7 +12,6 @@ import com.bero.DB_entities.User;
 import com.bero.DB_entities.Waiter;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.charts.model.Label;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H2;
@@ -26,8 +22,6 @@ import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.server.VaadinSession;
-
-
 
 public class AddingOrderForm {
     private static Div addOrderForm;
@@ -101,7 +95,6 @@ public class AddingOrderForm {
 
       H3 generalSumAll = new H3("Загальна сума: ");
 
-      //this.submitButton
       submitButton = new Button("Підтвердити");
       submitButton.addClassName("submitButton");
       submitButton.getElement().addEventListener("click", e->{
@@ -116,7 +109,7 @@ public class AddingOrderForm {
             Div orderTable = order.createTable();
             getOrdersContainer().addComponentAtIndex(0, orderTable);
 
-            order = null;
+            // order = null;
             clearFilledDataInForm(); 
             addOrderForm.getElement().executeJs("document.querySelector(\".addOrderform\").classList.remove(\"show\")");
            }
@@ -130,10 +123,7 @@ public class AddingOrderForm {
         }
       });
 
-      
-
       addOrderForm.add(title, inputsContainer, secondTitle, dishTable, generalSumAll, submitButton);
-
       return addOrderForm;
     }
 
@@ -179,7 +169,8 @@ public class AddingOrderForm {
       return false;
     }
     else{
-      order = new Order( table, createWaiter(), orderedDishes, LocalDateTime.now());
+
+      order = new Order( table, createWaiter(), new ArrayList<>(orderedDishes), LocalDateTime.now());
       DB_Handler.connect();
       int orderId = DB_Handler.addNewOrder(order);
       DB_Handler.disconnect();
@@ -208,27 +199,23 @@ public class AddingOrderForm {
 
     String tableSelectValue = ((Select<String>)inputsContainer.getChildren().skip(1).findFirst().get()).getValue();
 
-    if( ! tableSelectValue.equals("Немає вільних столиків")){
-      Pattern pattern = Pattern.compile("\\d+");
-      Matcher matcher = pattern.matcher(tableSelectValue);
-      matcher.find();
-
-      String number = matcher.group();
-      DB_Handler.connect();
-      Table table = DB_Handler.getTableByNumber(number);
-      DB_Handler.disconnect();
-
-      return table;
-    }
-    
-
+    if (!tableSelectValue.equals("Немає вільних столиків")) {
+      // Розбиваємо текст на слова за пробілами
+      String[] words = tableSelectValue.split(" ");
+      
+      if (words.length > 1) { // Перевіряємо, чи є хоча б 2 слова
+          String number = words[1]; // Номер столу (друге слово)
+  
+          DB_Handler.connect();
+          Table table = DB_Handler.getTableByNumber(number);
+          DB_Handler.disconnect();
+  
+          return table;
+      }
+  }
     return null;
 
    }
-
-
-
-
 
     private static void addFoolDishInfoToTable(String dishName, String quantity){
      dishes.stream().filter( dish -> dish.getName().equals(dishName)).findFirst().ifPresent(dish -> {
@@ -327,8 +314,6 @@ public class AddingOrderForm {
      }
 
 
-
-
     public static void fillTableSelect(Select<String> tableSelect) throws ClassNotFoundException, SQLException{
       tableSelect.removeAll();
       DB_Handler.connect();
@@ -339,8 +324,6 @@ public class AddingOrderForm {
       for (int i = 0; i < tables.size(); i++) {
         tableInfo[i] = "Стіл " + tables.get(i).getNumber() + " Місткість: " + tables.get(i).getCapacity();
       }
-
-      
 
       if (tableInfo.length != 0){
         tableSelect.setItems(tableInfo);
@@ -353,11 +336,6 @@ public class AddingOrderForm {
 
     }
 
-
-
-
-    
-
     private static void fillWaiterSelect(Select<String> waiterSelect) throws ClassNotFoundException, SQLException{
       DB_Handler.connect();
       List<Waiter> waiters = DB_Handler.getAllWaiters();
@@ -367,7 +345,6 @@ public class AddingOrderForm {
       for (int i = 0; i < waiterInfo.length; i++) {
         waiterInfo[i] = waiters.get(i).getName();
       }
-
 
       waiterSelect.setItems(waiterInfo);
       if(waiterInfo.length != 0){
@@ -392,8 +369,6 @@ public class AddingOrderForm {
       }
     }
 
-
-
     private static  boolean cheackOrUpdateNumber(Input input){
       try{
          int quantity =  Integer.parseInt(input.getValue());
@@ -411,9 +386,7 @@ public class AddingOrderForm {
           e.printStackTrace();
           input.setValue("1");
          return false; 
-   
-      }
-      
+      } 
   }
 
     private static Div createHederRow(String... heders) {
@@ -479,13 +452,9 @@ public class AddingOrderForm {
       return dishes;
     }
 
-
     public static Select<String> getTableSelect(){
       return tableSelect;
     }
-
-
-
 
 }
 

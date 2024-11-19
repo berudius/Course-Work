@@ -4,36 +4,21 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Base64;
-
-
 import com.vaadin.flow.component.html.Image;
-
 import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
-
-
-
 import lombok.Data;
-
 
 @Data
 public class Dish {
 
     private int id;
-
     private String category;
-
     private String name;
-
     private String description;
-
     private double price;
-
     private int  quantity;
-
     private Image image;
-
     private byte[] byteImage;
-
 
     public Dish createClone(){
         return new Dish(id, category, name, description, price, quantity);

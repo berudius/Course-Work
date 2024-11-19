@@ -1,24 +1,17 @@
 package com.bero.views.components.TableViewComponents;
 
 import java.sql.SQLException;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-
 import com.bero.DB_Controllers.DB_Handler;
 import com.bero.DB_entities.Table;
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
-import com.vaadin.flow.component.html.Input;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.notification.Notification;
 
 public class DeskTable {
     Div DesksTable = new Div();
-   static Div tablesRows;
-    // Div tablesRows;
-//    private static Div tablesRowsCopy;
+    static Div tablesRows;
 
     public Div createTableForDesks(String... headers) throws ClassNotFoundException, SQLException {
     
@@ -37,11 +30,6 @@ public class DeskTable {
     return DesksTable;
 }
 
-
-
-
-
-
 private   Div createHeaderCell(String text) {
     Div headerCell = new Div();
     headerCell.addClassName("header-cell");
@@ -53,14 +41,11 @@ private Div createPlusRow(){
     Div tableRow = new Div();
     tableRow.addClassNames("table-row", "plus-row");
 
-    
     Image plusButton =  new Image("icons/plus-icon.png", "");
     plusButton.addClassName("plus-button");
     plusButton.getElement().addEventListener("click", e->{
        this.tablesRows.add( createEmptyRow());
     });
-
-
 
     tableRow.add(plusButton);
 
@@ -103,13 +88,7 @@ private Div createEmptyRow(){
             }
         });
 
-
-
-
         tableRow.add(numberCell, capacityCell, removeIcon, submitCreationIcon);
-
-        
-
         return tableRow;
 }
 
@@ -183,7 +162,6 @@ private static boolean isPositiveNumber(String capacityCellValue) {
     }
 }
 
-
 private Div createTablesDataContainer() throws ClassNotFoundException, SQLException {
 
     DB_Handler.connect();
@@ -199,15 +177,6 @@ private Div createTablesDataContainer() throws ClassNotFoundException, SQLExcept
     return tablesRows;
     
 }
-
-
-
-
-
-// public static boolean validateUpdating(Div numberCell, Div capacityCell, Table table) throws SQLException {
-//     return validateEnteredData(numberCell.getText(), capacityCell.getText(), table);
-// }
-
 
     public static Span createEditableSpan(String initialText) {
         Span span = new Span(initialText);

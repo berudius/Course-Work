@@ -1,10 +1,6 @@
 package com.bero.DB_entities;
 
-
-
 public class Owner extends User {
-
-
     public Owner(){}
     public Owner(int id, String name, Key key){
         this.id = id;
@@ -15,10 +11,5 @@ public class Owner extends User {
         this.name = name;
         this.key = key;
    }
-
- 
-   
-
-   
    
 }

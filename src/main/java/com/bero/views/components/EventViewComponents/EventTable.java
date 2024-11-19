@@ -2,7 +2,6 @@ package com.bero.views.components.EventViewComponents;
 
 import java.sql.SQLException;
 import java.util.List;
-
 import com.bero.DB_Controllers.DB_Handler;
 import com.bero.DB_entities.Event;
 import com.vaadin.flow.component.html.Div;
@@ -37,7 +36,6 @@ public class EventTable {
         this.orderDetailsContainer.removeClassName("show");
     }
 
-
    }
    public void showOrderdetails(){
         this.overlay.addClassName("show");
@@ -61,7 +59,7 @@ public class EventTable {
     public Div createEventTable() throws ClassNotFoundException, SQLException{
 
         Div eventTable = new Div(
-            createHederRow("Дата", "Час", "Подія", "Деталі"),
+            createHeaderRow("Дата", "Час", "Подія", "Деталі"),
             fillEventTable(),
             createPlusButton(this.eventRows)
             );
@@ -86,7 +84,7 @@ public class EventTable {
        return this.eventRows;
     }
 
-    private Div createHederRow(String... heders) {
+    private Div createHeaderRow(String... heders) {
         Div hederRow = new Div();
         hederRow.addClassName("table-header");
         

@@ -320,6 +320,22 @@ vaadin-notification-card {
     z-index: 1000; /* Забезпечення, щоб сповіщення було на передньому плані */
 }
 
+.parentRemover{
+    cursor: pointer;
+    font-weight: 900;
+    color: red;
+    font-size: 14px;
+    margin-left: 10px;
+}
+
+.parent{
+    padding-right: 6px;
+}
+.parent-parent{
+    display: flex;
+    flex-wrap: wrap;
+}
+
 
 
 

@@ -1,8 +1,5 @@
 package com.bero.DB_entities;
 
-
-
-
 public class Admin extends User{
 
     public Admin(){}

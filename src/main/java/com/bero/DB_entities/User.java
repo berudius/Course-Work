@@ -34,7 +34,6 @@ public abstract class User {
         Image submitIcon = new Image("icons/submit-icon.png", "");
         submitIcon.addClassName("submit-icon");
         
-
         Div nameCell = new Div(createEditableSpan(name, submitIcon));
         nameCell.addClassName("cell");
 
@@ -51,11 +50,21 @@ public abstract class User {
             try {
                 DB_Handler.connect();
 
-            if( this instanceof Waiter && DB_Handler.hasWaiterOrder(this.id)){
+            if( this instanceof Waiter ){
                 Notification notification = new Notification();
                 notification.addClassName("custom-notification");
                 notification.setDuration(3000); // Тривалість показу
-                notification.show("Неможливо видалити користувача допоки користувач має незавершені замовлення.");
+                String message = 
+                    DB_Handler.hasWaiterOrder(this.id)
+                    ? "Неможливо видалити користувача допоки користувач має незавершені замовлення."
+                     : DB_Handler.hasWaiterReport(this.id) 
+                      ? "Неможливо видалити користувача допоки користувач є частиною одного із звітів." 
+                       : "";                                      
+               if( ! message.isBlank()){ notification.show(message); }
+               else{
+                tableRow.removeFromParent();
+                removeFromDb();
+               }
             }
             else{
                 tableRow.removeFromParent();
@@ -70,10 +79,6 @@ public abstract class User {
         });
 
         submitIcon.getElement().addEventListener("click", e->{
-
-            
-
-
             try {
                 DB_Handler.connect();
                 boolean isUpdatingSyccess = validateUpdating(nameCell, loginCell, competencyCell, accessCell);
@@ -88,16 +93,14 @@ public abstract class User {
             }
         });
 
-
-
         if(competencyCell == null){
             tableRow.add( nameCell, loginCell, accessCell, removeIcon, submitIcon);
         }
         else{
             tableRow.add(nameCell,competencyCell, loginCell, accessCell, removeIcon, submitIcon);
         }
+        if(this instanceof Owner){removeIcon.addClassName("hidden");}
         
-
         return tableRow;
     }
 
@@ -138,13 +141,11 @@ public abstract class User {
 
        else{
 
-        
         if(this instanceof Waiter && DB_Handler.hasWaiterOrder(this.id)){
             notification.show("Неможливо змінити роль користувача допоки користувач має незавершені замовлення.");
             return false;
         }
-        else{
-            
+        else{    
         int i = 0;
         this.getKey().setAccessRight(accessRight);
         this.getKey().setLogin(login);
@@ -153,11 +154,8 @@ public abstract class User {
        Div theUIRowWithUserData = (Div)nameCell.getParent().get();
        theUIRowWithUserData.removeFromParent();//removing user from table on UI
 
-
-
         switch (accessRight) {
         
-
             case "Офіціант":
             DB_Handler.addNewUser(new Waiter(name, competencyRank, new Key(this.key.getLogin(), this.key.getPassword(), this.key.getAccessRight() )));
              break;
@@ -174,22 +172,11 @@ public abstract class User {
                 break;
         }
 
-
         this.setKey(null);
         return true;
-
        }
+    }  
     }
-
-
-
-
-       
-        
-    }
-
-
-
 
     protected static Div createDetails(String name) {
         Div details = new Div();
@@ -201,8 +188,6 @@ public abstract class User {
         return details;
     }
     
-    
-    
     protected Span createEditableSpan(String initialText, Image submitIcon) {
         Span span = new Span(initialText);
         span.addClassName("editable");
@@ -213,8 +198,6 @@ public abstract class User {
             this.textBeforeChanging = span.getText();
             
         });
-
-        
         span.getElement().addEventListener("input", e->{
 
             span.getElement().executeJs("return this.innerText;").then(text -> {
@@ -251,149 +234,18 @@ public abstract class User {
     }
     
     private void removeFromDb() throws ClassNotFoundException, SQLException{
-      
-       DB_Handler.removeUser(this);
+       DB_Handler.removeUserByKeyId(this.getKey().getId());
     }
-    
 
    protected Div createCompetencyCellSelect(Image submitIcon){
     return null;
     }
-
-
-    public void showAddUserForm(){
-
-        
-    }
-        // Div tableRow = new Div();
-        // tableRow.addClassName("table-row");
-
-        // Span idSpan = new Span("");
-        // idSpan.setVisible(false);
-
-        // Input nameinput = new Input();
-        // nameinput.setPlaceholder("Ім'я");
-        // Div nameCell = new Div(nameinput);
-        // // Div nameCell = new Div(createEditableSpan("Ім'я"));
-        // nameCell.addClassName("cell");
-
-        // Div competencyCell = createCompetencyCellSelect();
-
-        // Input loginInput = new Input();
-        // loginInput.setPlaceholder("Логін");
-        // Div loginCell = new Div(loginInput);
-        // // Div loginCell = new Div(createEditableSpan("Логін"));
-        // loginCell.addClassName("cell");
-
-        // Input pasInput = new Input();
-        // pasInput.setPlaceholder("Пароль");
-        // pasInput.setType("password");
-        // Div passwordCell = new Div(pasInput);
-        // // Div passwordCell = new Div(createEditableSpan("Пароль"));
-        // passwordCell.addClassName("cell");
-        // Div accessCell = new Div(createSelect("", Arrays.asList("Офіціант", "Адміністратор", "Власник")));
-        // accessCell.addClassName("cell");
-        // Image removeIcon = new Image("icons/remove-icon.png", "");
-        // removeIcon.addClassName("stuff-remove-icon");
-        // removeIcon.getElement().addEventListener("click", e->{
-        //     tableRow.removeFromParent();
-        //     // try {
-        //     //     removeFromDb();
-                
-
-        //     // } catch (ClassNotFoundException e1) {
-        //     //     e1.printStackTrace();
-        //     // } catch (SQLException e1) {
-        //     //     e1.printStackTrace();
-        //     // }
-        // });
-
-        // Image submitIcon = new Image("icons/submit-icon.png", "");
-        // submitIcon.addClassNames("submit-icon", "show");
-        // submitIcon.getElement().addEventListener("click", e->{
-        //     fillUserData(tableRow);
-        //     validateUserData(tableRow);
-        // });
-
-        // if(competencyCell == null){
-            
-        //     tableRow.add(idSpan, nameCell, loginCell, passwordCell, accessCell, removeIcon, submitIcon);
-        // }
-        // else{
-
-        
-        //     tableRow.add(idSpan, nameCell,competencyCell, loginCell,passwordCell, accessCell, removeIcon, submitIcon);
-        // }
-
-
-        // return tableRow;
-    
-
+   public void showAddUserForm(){}
 
     public void setCompetencyRank(String competencyRank){
     }
 
     public String getCompetencyRank(){
         return "";
-    }
-
-    // private void fillUserData(Div tableRow){
-
-    //         List<Component> columns = tableRow.getChildren().toList();
-    //  final  int  maxColumnForWaiters = 8;
-    //  final  int  maxColumnForOtherUsers = 7;
-
-    //     int columnsQuantity = columns.size();
-    //     this.key = new Key();
-    //     switch (columnsQuantity) {
-    //         case maxColumnForOtherUsers:
-    //             this.name = ((Span)((Div)columns.get(1)).getChildren().findFirst().get()).getText();
-                
-    //             String login = ((Span)((Div)columns.get(2)).getChildren().findFirst().get()).getText();
-    //             this.key.setLogin(login); 
-
-    //             String password = ((Span)((Div)columns.get(3)).getChildren().findFirst().get()).getText();
-    //             this.key.setPassword(password); 
-
-    //             String accessRight = ((Select<String>)((Div)columns.get(4)).getChildren().findFirst().get()).getValue();
-    //             this.key.setAccessRight(accessRight);
-    //         break;
-
-    //         case maxColumnForWaiters:
-    //         int i = 0;
-    //             this.name = ((Span)((Div)columns.get(1)).getChildren().findFirst().get()).getText();
-
-    //             String competencyRank = ((Select<String>)((Div)columns.get(2)).getChildren().findFirst().get()).getValue();
-    //             this.setCompetencyRank(competencyRank);
-
-                
-    //             String login2 = ((Span)((Div)columns.get(3)).getChildren().findFirst().get()).getText();
-    //             this.key.setLogin(login2); 
-
-    //             String password2 = ((Span)((Div)columns.get(4)).getChildren().findFirst().get()).getText();
-    //             this.key.setPassword(password2); 
-
-    //             String accessRight2 = ((Select<String>)((Div)columns.get(5)).getChildren().findFirst().get()).getValue();
-    //             this.key.setAccessRight(accessRight2);
-
-
-    //         break;
-    //         default:
-    //             break;
-                
-    //     }
-            
-
-        
-    // }
-
-    // private void validateUserData(Div tableRow) {
-
-    //     //boolean bool = this.
-
-    //    //List<Component> rows = tableRow.getParent().get().getChildren().toList();
-
-    // }
-
-    
+    }  
 }

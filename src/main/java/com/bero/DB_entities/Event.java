@@ -5,31 +5,21 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
+import java.time.format.DateTimeParseException;
 import java.util.List;
-
-import org.checkerframework.checker.units.qual.t;
-
 import com.bero.DB_Controllers.DB_Handler;
 import com.bero.views.components.EventViewComponents.EventTable;
-import com.bero.views.components.OrderViewComponents.AddingOrderForm;
-import com.vaadin.flow.component.ClickEvent;
-import com.vaadin.flow.component.ComponentEventListener;
-import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.contextmenu.ContextMenu;
-import com.vaadin.flow.component.contextmenu.MenuItem;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H4;
-import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Input;
 import com.vaadin.flow.component.html.ListItem;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.html.UnorderedList;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.select.Select;
-
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.val;
 
 
 @Data
@@ -38,10 +28,6 @@ public class Event {
    int id;
    LocalDateTime dateTime;
    String eventType;
-   List<Order> orders;
-
-
-
 
    public Event(int id, LocalDateTime dateTime, String eventType){
       this.id = id;
@@ -53,10 +39,8 @@ public class Event {
       this.id = id;
       this.dateTime = dateTime;
       this.eventType = eventType;
-      this.orders = orders;
    }
 
-   
    public void setDefault(){
          this.dateTime = LocalDateTime.now();
          this.eventType = "Банкет";
@@ -137,10 +121,13 @@ public class Event {
          });
 
          eventTypeSelect.getElement().addEventListener("change", e->{
-            updateEventTypeInDB(eventTypeSelect);
+            try {
+               updateEventTypeInDB(eventTypeSelect);
+            } catch (ClassNotFoundException | SQLException e1) {
+               // TODO Auto-generated catch block
+               e1.printStackTrace();
+            }
          });
-
-         
 
          return tableRow;
       }
@@ -148,8 +135,11 @@ public class Event {
       return new Div();
    }
 
-  private void updateEventTypeInDB(Select<String> eventTypeSelect){
-
+   private void updateEventTypeInDB(Select<String> eventTypeSelect) throws ClassNotFoundException, SQLException{
+    this.eventType = eventTypeSelect.getValue();
+    DB_Handler.connect();
+    DB_Handler.updateEventType(this.eventType, this.id);
+    DB_Handler.disconnect();
    }
 
    private void updateTimeInDB(Input input)throws ClassNotFoundException, SQLException{
@@ -165,34 +155,41 @@ public class Event {
         DB_Handler.disconnect();
    }
 
-   
-
-
    private void updateDateInDB(Input input) throws ClassNotFoundException, SQLException{
     String date = input.getValue();
-    
-    DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-    LocalDate localDate = LocalDate.parse(date, dateFormatter);
 
-    this.dateTime = this.dateTime.with(localDate);
+    this.dateTime = validateDate(date, input);
 
     DB_Handler.connect();
     DB_Handler.updateEventDateTime(this.dateTime, this.id);
     DB_Handler.disconnect();
    }
-   // private void updateDateInDB(Input input) throws ClassNotFoundException, SQLException{
-   //  String date = input.getValue();
+
+private LocalDateTime validateDate(String date, Input input) {
+    DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     
-   //  DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-   //  LocalDate localDate = LocalDate.parse(date, dateFormatter);
-   //  LocalTime localTime = this.dateTime.toLocalTime();
+    try {
+        LocalDate localDate = LocalDate.parse(date, dateFormatter);
+       
+        int year = localDate.getYear();
+        int currentYear = LocalDate.now().getYear();
 
-   //  this.dateTime = LocalDateTime.of(localDate, localTime);
+        if (year < currentYear || year > 2222) {
+         String formattedDate = this.dateTime.format(dateFormatter);
+         input.setValue(formattedDate);
+            return this.dateTime;
+        }
 
-   //    DB_Handler.connect();
-   //    DB_Handler.updateEventDateTime(this.dateTime, this.id);
-   //    DB_Handler.disconnect();
-   // }
+        return this.dateTime.with(localDate);
+
+    } catch (DateTimeParseException e) {
+        
+         String formattedDate = this.dateTime.format(dateFormatter);
+         input.setValue(formattedDate);
+        return this.dateTime;
+    }
+}
+
 
    protected Select<String> createSelect(String initialValue, String... items) {
         Select<String> select = new Select<>();
@@ -200,7 +197,7 @@ public class Event {
         select.setValue(initialValue);
         select.addClassName("input-list");
         select.getElement().addEventListener("change", e->{
-            // submitIcon.addClassName("show");
+            
         });
         return select;
     }
@@ -220,8 +217,6 @@ public class Event {
         Div menuContainer = new Div(menuCaller, contextMenu);
         menuContainer.addClassName("menu");
 
-
-        
         menuCaller.getElement().addEventListener("click", e ->{
             if(contextMenu.hasClassName("show")){
                 contextMenu.removeClassName("show");
@@ -243,13 +238,18 @@ public class Event {
          }
         });
 
+        executeLi.addClickListener(e->{
+         Notification.show("Не встиг реалізувати");
+        });
+
         return menuContainer;
     }
 
    private void fillOrderDetails() throws ClassNotFoundException, SQLException{
       
       DB_Handler.connect();
-      this.orders = DB_Handler.getEventOrders(this.id);
+      // this.orders =
+      List <Order> orders = DB_Handler.getEventOrders(this.id);
       DB_Handler.disconnect();
 
       EventTable eventTable = EventTable.getEventTable();
@@ -260,7 +260,6 @@ public class Event {
       H4 title = new H4("Замовлення в межах події");
       title.getElement().getStyle().set("text-align", "center");
       title.getElement().getStyle().set("color", "#3a3434");
-      
       
       Span questionMark = new Span("?");
       questionMark.addClassName("question-mark");
@@ -292,11 +291,8 @@ public class Event {
          }
         });
        
-    
-    
         return plusButton;
     }
-
 
     private void fillTableContextMenu(ContextMenu cmenu) throws SQLException, ClassNotFoundException {
       DB_Handler.connect();
@@ -323,8 +319,6 @@ public class Event {
      
   }
 
-  
-
   private void addOrderToEvent(Table table) throws ClassNotFoundException, SQLException{
    DB_Handler.connect();
    Order order = DB_Handler.getOrderByTableId(table.getId());   
@@ -335,6 +329,5 @@ public class Event {
    
    DB_Handler.disconnect();
   }
-
    
 }

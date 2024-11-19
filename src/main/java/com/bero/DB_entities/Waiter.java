@@ -1,25 +1,17 @@
 package com.bero.DB_entities;
 
-
 import java.util.Arrays;
-
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
-
 import lombok.Data;
-
-
-
-
 
 @Data
 public class Waiter extends User{
 
     @SuppressWarnings("unused")
     private String competencyRank = "";
-
+    
     public Waiter(){}
-
     public Waiter(int id, String name, String competencyRank, Key key){
     this.id = id;
     this.name = name;
@@ -54,9 +46,6 @@ public class Waiter extends User{
     this.competencyRank = competencyRank;
    }
 
-
-   
-
     @Override
     protected Div createCompetencyCellSelect(Image submitIcon){
         Div competencyCell = new Div(createSelect(competencyRank, Arrays.asList(
@@ -68,12 +57,4 @@ public class Waiter extends User{
         competencyCell.addClassName("cell");
         return  competencyCell;
     }
-
-    
-   
-    
-    
-
-   
-   
 }

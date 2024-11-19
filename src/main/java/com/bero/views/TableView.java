@@ -1,7 +1,6 @@
 package com.bero.views;
 
 import java.sql.SQLException;
-
 import com.bero.DB_entities.User;
 import com.bero.views.components.TableViewComponents.DeskTable;
 import com.bero.views.components.generalComponents.HeaderAndFooter;
@@ -22,22 +21,18 @@ import com.vaadin.flow.server.VaadinSession;
 @CssImport("./themes/my-app/tables-view.css")
 public class TableView extends VerticalLayout implements BeforeEnterObserver {
 
-    
-
-
     @Override
     public void beforeEnter(BeforeEnterEvent event) {
         User user = (User) VaadinSession.getCurrent().getAttribute("user");
         
         if (user == null) {
-            event.forwardTo(SigninView.class);
+            event.forwardTo(SignInView.class);
         }
     }
 
     public TableView() throws ClassNotFoundException, SQLException{
         FillTableViewByContent();
     }
-
         private void FillTableViewByContent() throws ClassNotFoundException, SQLException {
         setSizeFull();
         Header header = HeaderAndFooter.createHeader();
@@ -50,16 +45,8 @@ public class TableView extends VerticalLayout implements BeforeEnterObserver {
         add(realBody);
     }
 
-
-
     private Main createMain() throws ClassNotFoundException, SQLException{
         DeskTable table = new DeskTable();
         return new Main(table.createTableForDesks("Номер", "Місткість"));
     }
-
-
-
-    
-
-
 }

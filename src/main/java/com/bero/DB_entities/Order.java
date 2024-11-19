@@ -4,19 +4,18 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.stream.Collectors;
-
 import com.bero.DB_Controllers.DB_Handler;
-import com.bero.views.components.OrderViewComponents.OrderTable;
-import com.vaadin.flow.component.Component;
+import com.bero.views.components.OrderAndReportViewComponents.OrderTable;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.contextmenu.ContextMenu;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.html.ListItem;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.html.UnorderedList;
+import com.vaadin.flow.component.notification.Notification;
 
 import lombok.AccessLevel;
 import lombok.Data;
@@ -27,76 +26,85 @@ import lombok.Setter;
 public class Order {
 
     private int id = -1;
-
     private Table table;
-
     private Waiter waiter;
     private List<Dish> dishes;
-
     private LocalDateTime dateTime;
+    private Div dishRows;
 
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
-    private H2 totalSum;
+    private H2 totalSumH2;
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
+    private H4 totalQuantityH4;
+
+    @Setter(AccessLevel.NONE)
+    private boolean hasDiscount = false;
+    @Setter(AccessLevel.NONE)
+    private float discountRate = (float)0.15;//15%
     //container of all dishes displayed for user
-    private Div dishRows;
-
-    public Order(Table table, Waiter waiter, List<Dish> dishes, LocalDateTime dateTime){
-        this.table = table;
-        this.waiter = waiter;
-        this.dishes = dishes;
-        this.dateTime = dateTime;
-    }
-
-    public Order (int id, Table table, Waiter waiter, List<Dish> dishes, LocalDateTime dateTime){
-        this.id = id;
-        this.table = table;
-        this.waiter = waiter;
-        this.dishes = dishes;
-        this.dateTime = dateTime;
-    }
-
-
-    public Div createTable() throws ClassNotFoundException, SQLException{
-
-        Div table = new Div();
-        table.addClassName("order-styled-table");
-        table.setId(this.id + "");
-
-        Div containerForTableAndWaiter = createAndFillContainerForTableAndWaiter(false);
-        Div HeaderRow = createHederRow("Назва страви", "Категорія", "Опис", "Кількість", "Ціна за штуку", "Загальна ціна");
-         
+    @Setter (AccessLevel.NONE)
+    @Getter (AccessLevel.NONE)
+    private H2 totalDiscountSumH2;
         
-
-        Span dots = new Span("...");
-        dots.addClassName("context-menu-caller");
-
-        ListItem executeLi = new ListItem("Виконати");
-        ListItem removeLi = new ListItem("Видалити");
-        UnorderedList ul = new UnorderedList(executeLi, removeLi);
-
-        Div contextMenu = new Div(ul);
-        contextMenu.addClassName("context-menu");
-        Div menu = new Div(dots, contextMenu);
-        menu.addClassName("menu");
-        menu.getElement().getStyle().set("top", "60px");
-
-        //container of all dishes displayed for user
-        dishRows = createDishRows();
-        Button addDishbButton = new Button("Додати страву");
-        addDishbButton.getElement().getStyle().set("margin", "10px 30% 0 30%");
-
-        ContextMenu cmenu = new ContextMenu(addDishbButton);
-        cmenu.setOpenOnClick(true);
-        fillDishesContextMenu(cmenu);
-
-        this.totalSum = new H2( "Загальна сума: " + getTotalSum());
-        totalSum.addClassName("totalSum");
+        public Order(Table table, Waiter waiter, List<Dish> dishes, LocalDateTime dateTime){
+            this.table = table;
+            this.waiter = waiter;
+            this.dishes = dishes;
+            this.dateTime = dateTime;
+        }
+    
+        public Order (int id, Table table, Waiter waiter, List<Dish> dishes, LocalDateTime dateTime){
+            this.id = id;
+            this.table = table;
+            this.waiter = waiter;
+            this.dishes = dishes;
+            this.dateTime = dateTime;
+        }
+    
+        public Div createTable() throws ClassNotFoundException, SQLException{
+    
+            Div orderTable = new Div();
+            orderTable.addClassName("order-styled-table");
+            orderTable.setId(this.id + "");
+    
+            Div containerForTableAndWaiter = createAndFillContainerForTableAndWaiter(false);
+            Div HeaderRow = createHederRow("Назва страви", "Категорія", "Опис", "Кількість", "Ціна за штуку", "Загальна ціна");
+            Span dots = new Span("...");
+            dots.addClassName("context-menu-caller");
+    
+            ListItem executeLi = new ListItem("Виконати");
+            ListItem removeLi = new ListItem("Видалити");
+            UnorderedList ul = new UnorderedList(executeLi, removeLi);
+    
+            Div contextMenu = new Div(ul);
+            contextMenu.addClassName("context-menu");
+            Div menu = new Div(dots, contextMenu);
+            menu.addClassName("menu");
+            menu.getElement().getStyle().set("top", "60px");
+    
+            //container of all dishes displayed for user
+            dishRows = createDishRows();
+            Button addDishbButton = new Button("Додати страву");
+            addDishbButton.getElement().getStyle().set("margin", "10px 30% 0 30%");
+    
+            ContextMenu cmenu = new ContextMenu(addDishbButton);
+            cmenu.setOpenOnClick(true);
+            fillDishesContextMenu(cmenu);
+    
+            this.totalQuantityH4 = new H4( "Загальна кількість страв: " + getTotalQuantity());
+            totalQuantityH4.addClassName("totalQuantity");
+            this.totalSumH2 = new H2( "Загальна сума: " + getTotalSum());
+            totalSumH2.addClassName("totalSum");
+            this.totalDiscountSumH2 = new H2("Загальна сума із знижкою " + Math.round(discountRate * 100) + "%: " + ((double)Math.round(getTotalSum() * (1.0-discountRate))));//totalsum * (100%-15%)
+            totalDiscountSumH2.addClassNames("hidden", "totalSum");
+            if(hasDiscount){
+                this.totalDiscountSumH2.removeClassName("hidden");
+            }
        
-        table.add(menu, containerForTableAndWaiter, HeaderRow, dishRows, addDishbButton, totalSum);
+        orderTable.add(menu, containerForTableAndWaiter, HeaderRow, dishRows, addDishbButton, totalQuantityH4, totalSumH2,totalDiscountSumH2 );
    
-        
-
         boolean clicked[] = {false};
         dots.getElement().addEventListener("click", e ->{
             if(clicked[0]){
@@ -110,11 +118,8 @@ public class Order {
         });
 
         executeLi.getElement().addEventListener("click", e->{
-            OrderTable.openReceipt(this);
             try {
-                DB_Handler.connect();
-                DB_Handler.saveExecutedOrder(this.id);
-                table.removeFromParent();
+                ExecuteOrder(orderTable, contextMenu);
             } catch (ClassNotFoundException | SQLException e1) {
                 // TODO Auto-generated catch block
                 e1.printStackTrace();
@@ -123,24 +128,46 @@ public class Order {
         });
 
         removeLi.getElement().addEventListener("click", e->{
-            table.removeFromParent();
             try {
-                DB_Handler.connect();
-                DB_Handler.removeOrderById(this.id);
-                DB_Handler.disconnect();
-                contextMenu.removeClassName("show");
-            } catch (SQLException e1) {
-                // TODO Auto-generated catch block
-                e1.printStackTrace();
-            } catch (ClassNotFoundException e1) {
+                deleteOrderFromDBAndUI(orderTable, contextMenu);
+            } catch (SQLException | ClassNotFoundException e1) {
                 // TODO Auto-generated catch block
                 e1.printStackTrace();
             }
         });
-
         
+        return orderTable;
+    }
 
-        return table;
+    private void ExecuteOrder(Div orderTable, Div contextMenu) throws ClassNotFoundException, SQLException{
+                DB_Handler.connect();
+                Event event = DB_Handler.getEventIfHasOrder(this.id);
+                if(event == null){
+                    OrderTable.openReceipt(this, orderTable);
+                    DB_Handler.saveExecutedOrder(this.id);
+                    DB_Handler.removeOrderById(this.id);
+                }
+                else{
+                    Notification.show("Неможливо виконати замовлення, яке є частиною Події \"" + event.getEventType()
+                    + "\", що відбудеться " + event.getDateTime());
+                }
+                DB_Handler.disconnect();
+                contextMenu.removeClassName("show");
+    }
+
+    private void deleteOrderFromDBAndUI (Div orderTable, Div contextMenu) throws ClassNotFoundException, SQLException{
+        DB_Handler.connect();
+                Event event = DB_Handler.getEventIfHasOrder(this.id);
+                if(event == null){
+                    DB_Handler.removeOrderById(this.id);
+                    orderTable.removeFromParent();
+                }
+                else{
+                    Notification.show("\"Неможливо видалити замовлення, яке є частиною Події " + event.getEventType()
+                    + "\" та відбудеться " + event.getDateTime());
+                }
+                DB_Handler.disconnect();
+                contextMenu.removeClassName("show");
     }
  
     public Div createMiniTable() throws ClassNotFoundException, SQLException{
@@ -154,8 +181,8 @@ public class Order {
         dishRows = createMiniDishRows();
 
 
-        this.totalSum = new H2( "Загальна сума: " + getTotalSum());
-        totalSum.addClassName("totalSum");
+        this.totalSumH2 = new H2( "Загальна сума: " + getTotalSum());
+        totalSumH2.addClassName("totalSum");
 
         Span redirectSpan = new Span("Перейти до замовлення");
         redirectSpan.addClassName("event-order-span");
@@ -167,7 +194,7 @@ public class Order {
         removeSpan.getStyle()
         .set("margin-left", "3%");
 
-        Div infoContainer = new Div(totalSum, redirectSpan, removeSpan);
+        Div infoContainer = new Div(totalSumH2, redirectSpan, removeSpan);
         infoContainer.getElement().getStyle()
         .set("display", "flex")
         .set("align-items", "center");
@@ -201,22 +228,26 @@ public class Order {
     }
 
 
-    public double getTotalSum(){
+    public double getTotalSum() {
         double totalSum = 0.0;
+
         for (Dish dish : this.dishes) {
             totalSum += dish.getPrice() * dish.getQuantity();
+        }
+        if(totalSum >= 500){
+            hasDiscount = true;
         }
 
         return totalSum;
     }
 
-
-
-
-
-
-
-
+    public int getTotalQuantity(){
+        int generalDishesQuantity = 0;
+        for (Dish dish : this.dishes) {
+            generalDishesQuantity += dish.getQuantity();
+        }
+        return generalDishesQuantity;
+    }
 
 private Div createAndFillContainerForTableAndWaiter(boolean miniMode) throws ClassNotFoundException, SQLException {
     Div tableAndWaiterContainer = new Div();
@@ -240,9 +271,9 @@ private Div createAndFillContainerForTableAndWaiter(boolean miniMode) throws Cla
         tableCell.getElement().getStyle().set("cursor", "pointer");
         waiterCell.getElement().getStyle().set("cursor", "pointer");
 
-        ContextMenu cWaiterMenu = new ContextMenu(waiterCell);
-        cWaiterMenu.setOpenOnClick(true);
-        fillWaiterContextMenu(cWaiterMenu, tableAndWaiterContainer);
+        ContextMenu cWaitersMenu = new ContextMenu(waiterCell);
+        cWaitersMenu.setOpenOnClick(true);
+        fillWaiterContextMenu(cWaitersMenu, tableAndWaiterContainer);
 
         ContextMenu cTableMenu = new ContextMenu(tableCell);
         cTableMenu.setOpenOnClick(true);
@@ -260,8 +291,6 @@ private Div createAndFillContainerForTableAndWaiter(boolean miniMode) throws Cla
     
     return tableAndWaiterContainer;
    }
-
-
 
 
 private void fillWaiterContextMenu(ContextMenu cmenu, Div tableAndWaiterContainer) throws SQLException, ClassNotFoundException {
@@ -319,9 +348,6 @@ private void fillTableContextMenu(ContextMenu cmenu, Div tableAndWaiterContainer
         cmenu.addItem("Немає вільних столиків");
     }
 
-
-    
-    
 }
 
 private void fillDishesContextMenu(ContextMenu cmenu) throws ClassNotFoundException, SQLException {
@@ -340,7 +366,7 @@ private void fillDishesContextMenu(ContextMenu cmenu) throws ClassNotFoundExcept
                 if( ! checkDishExistence(dish)){
                     this.dishes.add(dish);
                     addDishInDishRows(dish);
-                    updateTotalPrice();
+                    updateTotalPriceAndQuantity();
                     DB_Handler.connect();
                     DB_Handler.addDishToOrder(this.id, dish.getId(), 1);
                     DB_Handler.disconnect();
@@ -349,7 +375,7 @@ private void fillDishesContextMenu(ContextMenu cmenu) throws ClassNotFoundExcept
                 else{
                    int dishIndex = updateDishQuantityInOrderDishesList(dish);
                    updateDishRowQuantityAndGeralGroupPriceCells(dishIndex);
-                   updateTotalPrice();
+                   updateTotalPriceAndQuantity();
                    Dish dishToAddQuantity = this.dishes.get(dishIndex);
                    updateQuantityInDB(dishToAddQuantity);
 
@@ -497,7 +523,7 @@ private void fillDishesContextMenu(ContextMenu cmenu) throws ClassNotFoundExcept
     contextMenu.addItem("Видалити страву", event -> {
         try {
             dishes.remove(dish);
-            updateTotalPrice();
+            updateTotalPriceAndQuantity();
             dishRow.removeFromParent();
             DB_Handler.connect();
             DB_Handler.removeDishFromOrder(this.id, dish.getId());
@@ -541,7 +567,7 @@ private void fillDishesContextMenu(ContextMenu cmenu) throws ClassNotFoundExcept
             dish.setQuantity(dish.getQuantity() + 1);
             quantityCell.setText(""+dish.getQuantity());
             groupPriceCell.setText((dish.getQuantity() * dish.getPrice()) + "");
-            updateTotalPrice();
+            updateTotalPriceAndQuantity();
         }
    }
 
@@ -550,13 +576,18 @@ private void fillDishesContextMenu(ContextMenu cmenu) throws ClassNotFoundExcept
             dish.setQuantity(dish.getQuantity() - 1);
             quantityCell.setText(""+dish.getQuantity());
             groupPriceCell.setText((dish.getQuantity() * dish.getPrice()) + "");
-            updateTotalPrice();
+            updateTotalPriceAndQuantity();
         }
    }
 
 
-   private void updateTotalPrice(){
-    this.totalSum.setText("Загальна сума: " + this.getTotalSum());
+   private void updateTotalPriceAndQuantity(){
+    this.totalSumH2.setText("Загальна сума: " + this.getTotalSum());
+    this.totalQuantityH4.setText("Загальна кількість страв: " + this.getTotalQuantity());
+    if(hasDiscount){
+        this.totalDiscountSumH2.setText("Загальна сума із знижкою " +  Math.round(discountRate * 100) + "%: " + ((double)Math.round(getTotalSum() * (1.0-discountRate))));
+        this.totalDiscountSumH2.removeClassName("hidden");
+    }
    }
 
     private Div createHederRow(String... heders) {
@@ -584,79 +615,4 @@ private void fillDishesContextMenu(ContextMenu cmenu) throws ClassNotFoundExcept
 
         return hederRow;
         }
-    
-
 }
-
-
-    
-    // private Div cloneRows(Div dishRows){
-
-    //     Div cloned = new Div();
-
-    //     List<Component> rows = dishRows.getChildren().toList();
-    //     for (Component component : rows) {
-    //         cloned.add(cloneRow((Div)component));
-    //     }
-
-    //     H2 title = new H2("Ново-додані страви:");
-    //     title.getElement().getStyle().set("background", "#292929");
-    //     title.getElement().getStyle().set("padding", "10px 0");
-    //     title.getElement().getStyle().set("margin", "0");
-
-    //     cloned.add(title);
-    //     return cloned;
-    // }
-
-
-    // private Div cloneRow(Div originalRow) {
-    //     Div clonedRow = new Div();
-    //     clonedRow.addClassName("table-row");
-
-    //     int i = 0;
-    //     int descriptionCellPosition = 3;
-    //     for (Component child : originalRow.getChildren().collect(Collectors.toList())) {
-    //         if (child instanceof Div) {
-    //             Div cellClone = new Div();
-    //             if(i == descriptionCellPosition -1){
-    //                 cellClone.addClassName("order-description-cell");
-    //             }
-    //             else{
-    //                 cellClone.addClassName("cell");
-    //             }
-    //             cellClone.setText(((Div) child).getText());
-    //             clonedRow.add(cellClone);
-
-
-    //             i++;
-    //         }
-
-    //     }
-
-    //     return clonedRow;
-    // }
-
-
-// private void updateTotalPrice(Div dishRow){
-//     Div totalSumParent = (Div) dishRow.getParent().get().getParent().get();
-//     H2 totalSum = (H2)totalSumParent.getChildren().reduce((firs, second) -> second).orElse(null);
-//     String text = totalSum.getText();
-//     totalSum.setText("Загальна сума: " + this.getTotalSum());
-//    }
-
-//     private Div createHederRow(String... heders) {
-//         Div hederRow = new Div();
-//         hederRow.addClassName("table-header");
-        
-//         for (String heder : heders) {
-//          Div cell = new Div(heder);
-//          cell.addClassName("header-cell");
-//          hederRow.add(cell);
-//         }
-
-//         return hederRow;
-//      }
-    
-//      public void addDishToDishes(Dish dish){
-        
-//      }

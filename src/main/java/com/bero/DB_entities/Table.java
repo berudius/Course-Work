@@ -1,33 +1,21 @@
 package com.bero.DB_entities;
 
-
-
 import java.sql.SQLException;
-import java.util.Arrays;
-
 import com.bero.DB_Controllers.DB_Handler;
 import com.bero.views.components.TableViewComponents.DeskTable;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.notification.Notification;
-
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
-
 @Data
 public class Table {
-
-
     private int id = -1;
-
-
     private String number;
-
-
     private int capacity;
 
     @Getter(AccessLevel.NONE)
@@ -57,9 +45,6 @@ public class Table {
     this.number = number;
    }
 
-
-
-   
 public Div createTableRow(){
 
         Div tableRow = new Div();
@@ -103,8 +88,6 @@ public Div createTableRow(){
             }
         });
 
-    
-
         submitIcon.getElement().addEventListener("click", e -> {
             try {
               boolean isValidData = DeskTable.validateAndSaveTable(tableRow, numberSpan, capacitySpan, this, true);
@@ -114,13 +97,7 @@ public Div createTableRow(){
             }
         });
 
-
-
-
         tableRow.add(numberCell, capacityCell, removeIcon, submitIcon);
-
-        
-
         return tableRow;
     }
 
@@ -134,13 +111,11 @@ public Div createTableRow(){
             this.textBeforeChanging = span.getText();
         });
 
-        
         span.getElement().addEventListener("input", e->{
 
             span.getElement().executeJs("return this.innerText;").then(text -> {
             span.setText(text.asString());
             String textAfterChanging = span.getText();
-            
             
             span.getElement().executeJs(
                 "const range = document.createRange();" +
@@ -154,11 +129,8 @@ public Div createTableRow(){
                 submitIcon.addClassName("show");  
             }
         });
-
-            
+ 
         });
         return span;
     }
-
-
 }

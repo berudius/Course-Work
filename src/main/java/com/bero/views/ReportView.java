@@ -1,10 +1,9 @@
 package com.bero.views;
 
 import java.sql.SQLException;
-
 import com.bero.DB_entities.User;
-import com.bero.views.components.StuffViewComponents.StuffQueryController;
-import com.bero.views.components.StuffViewComponents.StuffTable;
+import com.bero.views.components.OrderAndReportViewComponents.OrderTable;
+import com.bero.views.components.OrderAndReportViewComponents.ReportQueryController;
 import com.bero.views.components.generalComponents.HeaderAndFooter;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.Div;
@@ -18,10 +17,11 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinSession;
 
-@Route("stuff")
-@PageTitle("Stuff")
-@CssImport("./themes/my-app/stuff-view.css")
-public class StuffView extends VerticalLayout implements BeforeEnterObserver  {
+
+@Route("reports")
+@PageTitle("Reports")
+@CssImport("./themes/my-app/order-view.css")
+public class ReportView  extends VerticalLayout implements BeforeEnterObserver  {
 
 
     @Override
@@ -33,11 +33,11 @@ public class StuffView extends VerticalLayout implements BeforeEnterObserver  {
         }
     }
 
-    public StuffView() throws ClassNotFoundException, SQLException{
-        FillStuffViewByContent();
+    public ReportView() throws ClassNotFoundException, SQLException{
+        FillOrderViewByContent();
     }
 
-        private void FillStuffViewByContent() throws ClassNotFoundException, SQLException {
+        private void FillOrderViewByContent() throws ClassNotFoundException, SQLException {
         setSizeFull();
         Header header = HeaderAndFooter.createHeader();
         Main main = createMain();
@@ -49,15 +49,14 @@ public class StuffView extends VerticalLayout implements BeforeEnterObserver  {
         add(realBody);
     }
 
-
-
-    private Main createMain() throws ClassNotFoundException, SQLException{
-       
-       StuffTable stuffTable = new StuffTable();
-        Div myCustomTable = stuffTable.createTableForWaiters();
-
-        StuffQueryController controller = new StuffQueryController(stuffTable.getUserRows());
-       
-        return new Main( controller.createRadioButtonContainer(), myCustomTable);
+    private Main createMain() throws ClassNotFoundException, SQLException{ 
+       OrderTable orderTableConstructor = new OrderTable();
+       Div reportTable = orderTableConstructor.createReportContainer();
+       ReportQueryController queryController = new ReportQueryController(reportTable);
+        return new Main(queryController.createRadioButtonContainer(), reportTable);
     }
+
 }
+
+
+

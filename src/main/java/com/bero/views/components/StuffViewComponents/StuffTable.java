@@ -1,4 +1,4 @@
-package com.bero.views.components.StaffViewComponents;
+package com.bero.views.components.StuffViewComponents;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -19,9 +19,6 @@ import com.vaadin.flow.component.html.Input;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.select.Select;
 
-
-
-
 public class StuffTable {
 
    private enum UserTableType{
@@ -37,15 +34,11 @@ public class StuffTable {
    private   String userTypes[] = {"Офіціанти", "Адміни", "Власники"};
    private   UserTableType currentRowType = UserTableType.WAITER;
 
-
    public StuffTable(){
     stuffTable.addClassName("styled-table");
    }
 
    private Div createTableForUsers(List<? extends User> users, String... headers) throws ClassNotFoundException, SQLException {
-    
-    
-    // stuffTable.removeAll();
 
     // Заголовки таблиці
     Div tableHeader = new Div();
@@ -143,8 +136,6 @@ private   Div createHeaderCell(String text) {
     return headerCell;
 }
 
-
-
 private   Div createUsersDataContainer(List<? extends User> users) {
     this.usersRows = new Div(); 
     this.usersRows.addClassName("DB_user-rows");
@@ -157,8 +148,6 @@ private   Div createUsersDataContainer(List<? extends User> users) {
 }
 
 
-
-// Тепер ви можете використовувати один метод для створення таблиці для офіціантів, адміністраторів і власників.
 public   Div createTableForWaiters() throws ClassNotFoundException, SQLException {
     DB_Handler.connect();
     List<Waiter> waiters = DB_Handler.getAllWaiters();
@@ -180,7 +169,6 @@ public   Div createTableForOwners() throws ClassNotFoundException, SQLException 
     return createTableForUsers(owners, "Ім'я", "Логін", "Права доступу");
 }
 
-
 private Div createPlusRow(){
     Div tableRow = new Div();
     tableRow.addClassNames("table-row", "plus-row");
@@ -191,23 +179,16 @@ private Div createPlusRow(){
         this.userAddingForm.addClassName("show-flex");
     });
 
-
-
     tableRow.add(plusButton);
 
     return tableRow; 
 }
-
-
-
 
 public void addComponentAtIndex(int index, Component component){
     if(index > 0 && index <= stuffTable.getComponentCount()){
     stuffTable.addComponentAtIndex(index, component);
     }
 }
-
-
 
 private void resetStyles(Span selectedSpan){
     List<Component> spanUserTypes = stuffTable.getChildren().skip(1).findFirst().get().getChildren().toList();
@@ -223,7 +204,6 @@ private Div createAddUserForm(UserTableType type){
 
     Div localAddUserForm = new Div();
         localAddUserForm.addClassName("user-add-form");
-
 
         String userType = "";
         switch (type) {
@@ -250,8 +230,6 @@ private Div createAddUserForm(UserTableType type){
         H2 title = new H2("Форма заповнення даних нового \n" + userType);
         title.addClassName("h2");
         localAddUserForm.add(title);
-
-        
 
         // Ім'я
         Input nameInput = new Input();
@@ -292,7 +270,6 @@ private Div createAddUserForm(UserTableType type){
         competencySelect.addClassNames("add-user-input-list", "input-list");
         localAddUserForm.add(competencySelect);
         }
-        
 
         // Повідомлення валідації
         Span validationMessage = new Span();
@@ -314,7 +291,6 @@ private Div createAddUserForm(UserTableType type){
 
         localAddUserForm.add(submitButton);
         return localAddUserForm;
-
 }
 
 private boolean isLoginUnique(String login) throws SQLException, ClassNotFoundException{
@@ -326,7 +302,6 @@ private boolean isLoginUnique(String login) throws SQLException, ClassNotFoundEx
 
 private void fillAndValidateUserData(UserTableType type) throws ClassNotFoundException, SQLException{
 
-   
    List<Component> dataFields = this.userAddingForm.getChildren().skip(2).toList();
    String name = ((Input)dataFields.get(0)).getValue();
    String login = ((Input)dataFields.get(1)).getValue();
@@ -386,14 +361,6 @@ private void fillAndValidateUserData(UserTableType type) throws ClassNotFoundExc
     addUserOnUI(user);
     
    }
-
-   
-
-
-
-
-
-
 }
 
 private void addUserOnUI (User user){
@@ -402,6 +369,10 @@ private void addUserOnUI (User user){
         Div newUserRow = user.createTableRow();
         this.usersRows.add(newUserRow);
     }
+}
+
+public Div getUserRows(){
+    return this.usersRows;
 }
 
 }

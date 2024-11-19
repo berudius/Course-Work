@@ -1,10 +1,9 @@
 package com.bero.views;
 
 import java.sql.SQLException;
-
 import com.bero.DB_entities.User;
-import com.bero.views.components.OrderViewComponents.AddingOrderForm;
-import com.bero.views.components.OrderViewComponents.OrderTable;
+import com.bero.views.components.OrderAndReportViewComponents.AddingOrderForm;
+import com.bero.views.components.OrderAndReportViewComponents.OrderTable;
 import com.bero.views.components.generalComponents.HeaderAndFooter;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.dependency.CssImport;
@@ -21,7 +20,6 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteParameters;
 import com.vaadin.flow.server.VaadinSession;
 
-
 @Route("orders/:order-id")
 @PageTitle("Orders")
 @CssImport("./themes/my-app/order-view.css")
@@ -34,11 +32,9 @@ public class OrderView  extends VerticalLayout implements BeforeEnterObserver  {
         User user = (User) VaadinSession.getCurrent().getAttribute("user");
         
         if (user == null) {
-            event.forwardTo(SigninView.class);
+            event.forwardTo(SignInView.class);
         }
 
-
-        
         RouteParameters params = event.getRouteParameters();
         this.anchor = params.get("order-id").orElse(null);
 
@@ -84,7 +80,6 @@ public class OrderView  extends VerticalLayout implements BeforeEnterObserver  {
        OrderTable orderTableConstructor = new OrderTable();
        Div orderTable = orderTableConstructor.getTablesContainer();
        Div addingOrderForm = AddingOrderForm.createAndGetAddingOrderForm();
-    //myCustomTable
         return new Main(addingOrderForm, orderTable, createAddDishButton());
     }
 

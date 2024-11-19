@@ -22,10 +22,10 @@ import com.vaadin.flow.component.button.Button;
 @Route("sign-in")
 @PageTitle("Ambrosia Luxe")
 @CssImport("./themes/my-app/signin-form.css")
-public class SigninView extends VerticalLayout {
+public class SignInView extends VerticalLayout {
 
 
-    public SigninView() throws ClassNotFoundException, SQLException {
+    public SignInView() throws ClassNotFoundException, SQLException {
 
         setSizeFull();
         Div signInFormContainer = new Div();
@@ -37,8 +37,7 @@ public class SigninView extends VerticalLayout {
 
 
     private void createSigninForm(Div container){
-        // Div form = new Div();
-        // form.addClassName("form");
+
 
         H2 label = new H2("Вхід до облікового запису");
 
@@ -87,7 +86,7 @@ public class SigninView extends VerticalLayout {
                     UI.getCurrent().navigate(DishesView.class);
                 }
                 catch(SQLException e){
-
+                    e.printStackTrace();
                 }
                 
             }
@@ -107,8 +106,7 @@ public class SigninView extends VerticalLayout {
         
 
 
-        // Додаємо компоненти до форми
-        // form.add(label, label1, loginField, label2, passwordField, button, forgotPass);
+  
         container.add(label, label1, loginField, loginErrorShower, label2, passwordField, passwordErrorShower, button, forgotPass);
         add(container);
     }
@@ -156,24 +154,6 @@ public class SigninView extends VerticalLayout {
     }
        
        }
-
-    //    else if(login.contains(" ")){
-    //     loginErrorShower.getElement().getStyle().set("color", "red");
-    //     loginErrorShower.add("Логін не може містити пробілів");
-    //     return false;
-    //    }
-
-    //    else if(login.length() < 5){
-    //     loginErrorShower.getElement().getStyle().set("color", "red");
-    //     loginErrorShower.add("Мінімальна кількість символів для логіну - 5");
-    //     return false;
-    //    }
-
-    //    else if(login.length() > 16){
-    //     loginErrorShower.getElement().getStyle().set("color", "red");
-    //     loginErrorShower.add("Максимальна кількість символів для логіну - 16");
-    //     return false;
-    //    }
 
 
     }

@@ -32,7 +32,7 @@ public class HeaderAndFooter {
         ul.add(new ListItem(new Anchor("dishes", "Страви")));
         ul.add(new ListItem(new Anchor("tables", "Столики")));
         ul.add(new ListItem(new Anchor("events", "Події")));
-        ul.add(new ListItem(new Anchor("work-schedule", "Робочий графік")));
+        ul.add(new ListItem(new Anchor("schedule", "Робочий графік")));
         ul.add(new ListItem(new Anchor("reports", "Звіти")));
 
         nav.add(ul);

@@ -3,31 +3,24 @@ package com.bero.views;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.PageTitle;
-
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
-
-
 import com.vaadin.flow.component.Component;
-
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.CssImport;
-
-
 import com.vaadin.flow.component.html.*;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
-
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinSession;
 import com.bero.DB_Controllers.DB_Handler;
 import com.bero.DB_entities.Dish;
 import com.bero.DB_entities.User;
+import com.bero.views.components.DishViewComponent.DishQueryController;
 import com.bero.views.components.generalComponents.HeaderAndFooter;
-
 
 
 
@@ -40,7 +33,6 @@ public class DishesView extends VerticalLayout implements BeforeEnterObserver {
     private Button addDishDataToDBButton;//кнопка підтвердження додавання нової стрви у формі "form-container" 
     private Button editDishDataToDBButton;//кнопка підтвердження редагування страви у формі "form-container" 
     private Main main;
-    // private Div initialDishesContainer = new Div();
     
     public DishesView() throws ClassNotFoundException, SQLException  {
 
@@ -52,13 +44,14 @@ public class DishesView extends VerticalLayout implements BeforeEnterObserver {
         User user = (User) VaadinSession.getCurrent().getAttribute("user");
         
         if (user == null) {
-            event.forwardTo(SigninView.class);
+            event.forwardTo(SignInView.class);
         }
     }
 
     private void FillDishesViewByContent() throws ClassNotFoundException, SQLException{
         setSizeFull();
         Header header = HeaderAndFooter.createHeader();
+        
         main = createMain();
         Footer footer = HeaderAndFooter.createFooter();
 
@@ -77,9 +70,13 @@ public class DishesView extends VerticalLayout implements BeforeEnterObserver {
         Div dishesContainer = new Div();
         dishesContainer.addClassName("dishes");
 
+        DishQueryController.setNull();
+        DishQueryController queryController = DishQueryController.getQueryController(dishesContainer);
+
+
         fillDishConteinerByDishesFromDB(dishesContainer);
 
-        return new Main(categories,dishesContainer, (createAddDishButton()), createDishAddingForm());
+        return new Main(categories, queryController.createRadioButtonContainer(), dishesContainer, (createAddDishButton()), createDishAddingForm());
     }
 
     private Aside createAndfillCategoryContainer() throws SQLException, ClassNotFoundException {
@@ -95,7 +92,7 @@ public class DishesView extends VerticalLayout implements BeforeEnterObserver {
             category.addClassName("category");
             category.getElement().addEventListener("click", e -> {
                 setRightStyleOnCategoriesUnits(categories, category);
-                // filterDishesAccordingToCategory(categoryName);
+                
             });
 
             category.add(categoryName);
@@ -120,53 +117,14 @@ public class DishesView extends VerticalLayout implements BeforeEnterObserver {
         categoryUnit.addClassName("category-clicked");
     }
 
-    /*  private void filterDishesAccordingToCategory(String category){
-        Div dishesContainer = (Div) main.getChildren().skip(1).findFirst().get();
-
-       List<Component> dishCards1;
-       List<Component> dishCards2;
-       List<Component> allDishCards;
-       if(category != "Всі страви"){
-         dishCards1 = initialDishesContainer.getChildren().filter(dishCard -> {
-            Paragraph categoryP = (Paragraph)dishCard.getChildren().skip(3).findFirst().orElse(null);
-            if (categoryP != null) {
-                String categoryName = categoryP.getText().replace("Категорія: ", "");
-                return categoryName.equals(category);
-            }
-            return false;
-        }).toList();
-           
-
-        dishCards2 = dishesContainer.getChildren().filter(dishCard -> {
-            Paragraph categoryP = (Paragraph)dishCard.getChildren().skip(3).findFirst().get();
-            String categoryName = categoryP.getText().replace("Категорія: ", "");
-    
-            return categoryName == category;
-        }).toList();
-       }
-       else{
-        dishCards1 = initialDishesContainer.getChildren().toList();
-       }
-        
-        
-       dishCards1.forEach(dishCard -> {
-        dishesContainer.add(dishCard);
-       });
-    }
-*/
-
-
     public void fillDishConteinerByDishesFromDB(Div dishContainer) throws SQLException, ClassNotFoundException{
         DB_Handler.connect();
         List<Dish> dishes = DB_Handler.getAllDishes();
+        DB_Handler.disconnect();
 
         for (Dish dish : dishes) {
             dishContainer.add(createDishCardFromDbDish(dish));
-            // initialDishesContainer.add(createDishCardFromDbDish(dish));
-        }
-
-
-        DB_Handler.disconnect();
+        }  
     }
 
     public Div createAddDishButton() {
@@ -226,7 +184,7 @@ public class DishesView extends VerticalLayout implements BeforeEnterObserver {
                 formContainer.getElement().getStyle().set("display", "none");
 
                Main main = (Main) formContainer.getParent().get();
-               Div dishesContainer = (Div) main.getChildren().skip(1).findFirst().get();
+               Div dishesContainer = (Div) main.getChildren().skip(2).findFirst().get();
                
                dish.setImageFromByteImage();
                dish.setId(id);
@@ -250,6 +208,7 @@ public class DishesView extends VerticalLayout implements BeforeEnterObserver {
         return formContainer;
     }
 
+    public static int counyer = 0;
 
     public  Div createDishCardFromDbDish(Dish dbDish){
 
@@ -258,18 +217,16 @@ public class DishesView extends VerticalLayout implements BeforeEnterObserver {
         dishCard.getElement().setAttribute("tabindex", "0");
         
         Image dishImage = dbDish.getImage();
-
+        if(! dishImage.getSrc().equals("data:image/jpeg;base64,")){
+            dishImage.getStyle().set("width", "250px");
+        }
         
         H2 dishTitle = new H2(dbDish.getName());
         
-        
         Paragraph categoryParagraph = new Paragraph("Категорія: " + dbDish.getCategory());
         Paragraph descriptionParagraph = new Paragraph(dbDish.getDescription());
+        descriptionParagraph.addClassName("description");
         Paragraph priceParagraph = new Paragraph("Ціна: " + dbDish.getPrice() + " грн");
-
-        
-
-        
 
         //контексне меню(що викликається при натисненні на 3 крапки)
         ListItem edite = new ListItem("Редагувати");
@@ -285,15 +242,15 @@ public class DishesView extends VerticalLayout implements BeforeEnterObserver {
 
         edite.getElement().addEventListener("click", e -> {
             
-        Div dishes = ((Div)dishCard.getParent().get());
-        Main main = (Main)dishes.getParent().get();
-        Div formContainer = (Div) main.getChildren().skip(3).findFirst().get();
-        ((H2)(formContainer.getChildren().skip(1).findFirst().get())).setText("Редагувати страву");
+            Div dishes = ((Div)dishCard.getParent().get());
+            Main main = (Main)dishes.getParent().get();
+            Div formContainer = (Div) main.getChildren().skip(4).findFirst().get();//skip 4 first brothers
+            ((H2)(formContainer.getChildren().skip(1).findFirst().get())).setText("Редагувати страву");
 
-        changeImageUpload(formContainer);
-        fillFormInputsByDishData(formContainer, dishCard);
-        changeButtonInAddDishFormOnEditButton(dishCard, formContainer);
-        this.getElement().executeJs("document.querySelector(\".form-container\").style.display = \"block\";");
+            changeImageUpload(formContainer);
+            fillFormInputsByDishData(formContainer, dishCard);
+            changeButtonInAddDishFormOnEditButton(dishCard, formContainer);
+            this.getElement().executeJs("document.querySelector(\".form-container\").style.display = \"block\";");
         });
 
         UnorderedList ul = new UnorderedList(edite, delete);
@@ -319,8 +276,6 @@ public class DishesView extends VerticalLayout implements BeforeEnterObserver {
             }
             
         });
-
-        
         menu.addClassName("menu");
         menu.add(dots);
         menu.add(contextMenu);
@@ -461,17 +416,6 @@ public class DishesView extends VerticalLayout implements BeforeEnterObserver {
     }
  };
 
-//  private void updateInitialDishesContainerByDish(Dish dishToUpdate, boolean includeImage){
-//    Div initialDishCard = (Div) initialDishesContainer.getChildren().filter(dishCard ->{
-//        Span idSpan = (Span) dishCard.getChildren().skip(6).findFirst().get();
-//        int cardId = Integer.parseInt(idSpan.getText());
-//        return cardId == dishToUpdate.getId();
-//     }).findFirst().get();
-
-//     updateDishCardByDish(initialDishCard, dishToUpdate, includeImage);
-//  }
-
-
     private Div createDeleteBunner(Dish dbDish, Div dishСard) {
 
         Div deleteBanner = new Div();
@@ -490,18 +434,15 @@ public class DishesView extends VerticalLayout implements BeforeEnterObserver {
         buttonConfirmYes.getElement().addEventListener("click", e -> {
             try {
                 DB_Handler.connect();
-                DB_Handler.deleteDishById(dbDish.getId());
+                if(DB_Handler.isDishInAnyOrder(dbDish.getId())){
+                    Notification.show("Неможливо видалити страву допоки вона є в одному із замовлень");
+                }
+                else{
+                    DB_Handler.deleteDishById(dbDish.getId());
+                    dishСard.removeFromParent();
+                }
+                deleteBanner.removeFromParent();
                 DB_Handler.disconnect();
-                dishСard.getParent().ifPresent(parent ->{
-                    ((Div) parent).remove(dishСard);
-                });
-
-                // initialDishesContainer.remove(dishСard);
-
-                deleteBanner.getParent().ifPresent(parent -> {
-                    ((Div) parent).remove(deleteBanner);
-                });
-
             } catch (ClassNotFoundException e1) {
                 e1.printStackTrace();
             } catch (SQLException e1) {
@@ -511,9 +452,7 @@ public class DishesView extends VerticalLayout implements BeforeEnterObserver {
         });
 
         buttonConfirmNo.getElement().addEventListener("click", e -> {
-            deleteBanner.getParent().ifPresent(parent -> {
-                ((Div) parent).remove(deleteBanner);
-            });
+            deleteBanner.removeFromParent();
         });
 
         buttonContainer.add(buttonConfirmYes, buttonConfirmNo);
@@ -574,18 +513,16 @@ public class DishesView extends VerticalLayout implements BeforeEnterObserver {
         Span errorMessage = (Span) children.get(2); // індекс для errorMessage
         Span inputDescription = (Span) children.get(1); // input опису
     
-        // getInnerText(inputDescription).then(value -> {
-            String innerText =  inputDescription.getText();
-            if (innerText.isBlank()) {
-                errorMessage.setText("Поле не може бути порожнім");
-                errorMessage.setVisible(true);
-            } else {
-                errorMessage.setVisible(false);
-                
-                counter[0]++;
-                dish.setDescription(innerText);
-            }
-        // });
+        String innerText =  inputDescription.getText();
+        if (innerText.isBlank()) {
+            errorMessage.setText("Поле не може бути порожнім");
+            errorMessage.setVisible(true);
+        } else {
+            errorMessage.setVisible(false);
+            
+            counter[0]++;
+            dish.setDescription(innerText);
+        }
     }
 
    
@@ -641,19 +578,6 @@ public class DishesView extends VerticalLayout implements BeforeEnterObserver {
         }
     }
     
-
-
-
-
-
-
-
-
-
-
-    // private boolean isJPEG(String filePath){
-    //     return filePath.endsWith(".jpeg")|| filePath.endsWith(".jpg");
-    // }
     private boolean isNumberEntered(Input input){
         try{
            double price =  Double.parseDouble(input.getValue());
@@ -711,16 +635,9 @@ public class DishesView extends VerticalLayout implements BeforeEnterObserver {
             textArea.setText(text.asString());
         });
         
-          
-        //    .getString("event.key");
-        //    if(allowedCharacters.contains(key)){
-        //     enteredText[0] += key;
-        //    }
-            
         });
         group.add(textArea);
         
-    
         Span validationMessage = new Span(); 
         validationMessage.setClassName("validation-message");
         validationMessage.setVisible(false); // Сховати за замовчуванням
@@ -728,7 +645,6 @@ public class DishesView extends VerticalLayout implements BeforeEnterObserver {
         return group;
     }
     
-
     private Div createFileInputGroup(String labelText, String inputId) {
         Div group = new Div();
         group.setId("imageInputGroup");
@@ -760,14 +676,6 @@ public class DishesView extends VerticalLayout implements BeforeEnterObserver {
         return group;
     }
 
-
-
-
-
-
-
-    
- 
 }
 
 
